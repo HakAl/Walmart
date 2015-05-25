@@ -1,0 +1,70 @@
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#fff"
+    android:orientation="vertical"
+    tools:context=".BaseActivityFragment"
+    >
+
+    <android.support.v7.widget.CardView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:cardBackgroundColor="@color/primary"
+        app:cardUseCompatPadding="true"
+        app:cardElevation="3dp"
+        >
+
+        <RelativeLayout
+            android:padding="16dp"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            >
+
+            <EditText
+                android:id="@+id/input_product"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:singleLine="true"
+                android:hint="Product Name"
+                android:textColorHint="#fff"
+                android:textColor="#fff"
+                android:imeOptions="actionDone"
+                android:layout_toLeftOf="@+id/btn_search_products"
+                />
+
+            <Button
+                android:id="@+id/btn_search_products"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="SEARCH"
+                android:textColor="#fff"
+                android:background="@color/accent"
+                android:layout_alignParentRight="true"
+                />
+
+        </RelativeLayout>
+
+    </android.support.v7.widget.CardView>
+
+    <com.jacmobile.productlookup.views.MultiStateView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/state_view_lookup"
+        >
+
+        <ListView
+            android:id="@+id/list_product_search"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:clipToPadding="false"
+            android:scrollbarStyle="outsideOverlay"
+            />
+
+    </com.jacmobile.productlookup.views.MultiStateView>
+
+
+</LinearLayout>
