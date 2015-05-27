@@ -1,15 +1,16 @@
-package com.jacmobile.productlookup;
+package com.jacmobile.productlookup.activities;
 
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import com.jacmobile.productlookup.App;
+import com.jacmobile.productlookup.R;
 import com.jacmobile.productlookup.di.AppComponent;
 import com.jacmobile.productlookup.network.service.WalmartService;
 
 import javax.inject.Inject;
-
 
 public class BaseActivity extends AppCompatActivity {
 

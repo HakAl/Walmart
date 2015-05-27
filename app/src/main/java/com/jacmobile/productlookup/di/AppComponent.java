@@ -1,7 +1,7 @@
 package com.jacmobile.productlookup.di;
 
-import com.jacmobile.productlookup.BaseActivity;
-import com.jacmobile.productlookup.BaseActivityFragment;
+import com.jacmobile.productlookup.activities.BaseActivity;
+import com.jacmobile.productlookup.activities.SearchFragment;
 
 import javax.inject.Singleton;
 
@@ -11,7 +11,7 @@ import dagger.Component;
 @Component(modules = AppModule.class)
 public interface AppComponent {
     void inject(BaseActivity activity);
-    void inject(BaseActivityFragment fragment);
+    void inject(SearchFragment fragment);
     /**
      * The following are also possible:
      *

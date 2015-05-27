@@ -1,5 +1,6 @@
-package com.jacmobile.productlookup;
+package com.jacmobile.productlookup.activities;
 
+import android.app.Activity;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.util.Log;
@@ -15,6 +16,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+import com.jacmobile.productlookup.R;
 import com.jacmobile.productlookup.network.model.WalmartItem;
 import com.jacmobile.productlookup.network.model.WalmartQuery;
 import com.jacmobile.productlookup.network.service.WalmartService;
@@ -31,25 +33,30 @@ import retrofit.Callback;
 import retrofit.RetrofitError;
 import retrofit.client.Response;
 
-public class BaseActivityFragment extends Fragment
+public class SearchFragment extends Fragment
 {
-    public static final String TAG = BaseActivityFragment.class.getSimpleName();
+    public static final String TAG = SearchFragment.class.getSimpleName();
 
     @Inject WalmartService walmartService;
 
     @InjectView(R.id.input_product) EditText inputQuery;
     @InjectView(R.id.list_product_search) ListView productList;
     @InjectView(R.id.state_view_lookup) MultiStateView multiStateView;
+    @InjectView(R.id.btn_search_products) View btnSearch;
 
     private ProductListAdapter productListAdapter;
 
-    public BaseActivityFragment() {}
+    public SearchFragment() {}
+
+    @Override public void onAttach(Activity activity)
+    {
+        super.onAttach(activity);
+        ((BaseActivity) activity).getApplicationComponent().inject(this);
+    }
 
     @Override public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
     {
-        ((BaseActivity) getActivity()).getApplicationComponent().inject(this);
-
-        View root = inflater.inflate(R.layout.fragment_base, container, false);
+        View root =  inflater.inflate(R.layout.fragment_search, container, false);
         ButterKnife.inject(this, root);
         return root;
     }
@@ -58,33 +65,35 @@ public class BaseActivityFragment extends Fragment
     {
         super.onViewCreated(view, savedInstanceState);
 
-        setProductLookupListener();
-    }
-
-    /**
-     *
-     */
-    private void setProductLookupListener()
-    {
         inputQuery.setOnEditorActionListener(
                 new TextView.OnEditorActionListener()
                 {
                     @Override public boolean onEditorAction(TextView v, int actionId, KeyEvent event)
                     {
                         if (actionId == EditorInfo.IME_ACTION_DONE) {
-                            Ui.hideSoftKeyboard(v);
-                            searchWalmart(v.getText().toString());
-
+                            doSearch(v);
                             return true;
                         }
                         return false;
                     }
                 }
         );
+        btnSearch.setOnClickListener(new View.OnClickListener() {
+            @Override public void onClick(View v)
+            {
+                doSearch(inputQuery);
+            }
+        });
+    }
+
+    private void doSearch(TextView v)
+    {
+        multiStateView.setViewState(MultiStateView.ViewState.LOADING);
+        Ui.hideSoftKeyboard(v);
+        searchWalmart(v.getText().toString());
     }
 
     /**
-     *
      * @param query
      */
     private void searchWalmart(String query)
@@ -94,6 +103,7 @@ public class BaseActivityFragment extends Fragment
             @Override
             public void success(WalmartQuery walmartQuery, Response response)
             {
+                multiStateView.setViewState(MultiStateView.ViewState.CONTENT);
                 handleWalmartSearch(walmartQuery);
             }
 
@@ -101,6 +111,7 @@ public class BaseActivityFragment extends Fragment
             public void failure(RetrofitError error)
             {
                 // something went wrong
+                multiStateView.setViewState(MultiStateView.ViewState.CONTENT);
             }
         });
     }
@@ -163,16 +174,16 @@ public class BaseActivityFragment extends Fragment
             WalmartItem currentItem = walmartItems.get(position);
 
             holder.name.setText(currentItem.getName());
-            holder.price.setText("Sale Price: $"+currentItem.getSalePrice());
+            holder.price.setText(
+                    String.format(getString(R.string.sale_price), currentItem.getSalePrice())
+            );
 
             Glide.with(getActivity())
                     .load(currentItem.getThumbnailImage())
                     .crossFade()
                     .into(holder.product);
 
-            Log.wtf(
-                    TAG, currentItem.toString()
-            );
+            Log.wtf(TAG, currentItem.toString());
 
             return convertView;
         }
